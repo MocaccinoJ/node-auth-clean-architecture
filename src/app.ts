@@ -1,6 +1,7 @@
 import { Server } from "./presentation/server";
-import config  from "./config/config";
 import { AppRoutes } from "./presentation/routes";
+import { MongoDatabase } from "./data/mongodb";
+import { envs } from "./config";
 
 (() => {
 
@@ -11,11 +12,16 @@ import { AppRoutes } from "./presentation/routes";
 
 async function main() {
     //todo: await base de datos
-    
+
+    await MongoDatabase.connect({
+        dbName: envs.MONGO_DB_NAME,
+        mongoUrl: envs.MONGO_URL,
+    })
+
     //todo: inicio de nuestro server
     // new Server( { port: 4000 } ).start();
     new Server({ 
-        port: Number(config.PORT),
+        port: Number(envs.NODE_PORT),
         routes: AppRoutes.routes,
     }).start();
     
