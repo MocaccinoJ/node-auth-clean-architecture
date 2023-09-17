@@ -17,7 +17,7 @@ export class AuthMiddleware {
 
         try {
             // todo:  
-            const payload = await JtwAdappter.validaTeToken(token);
+            const payload = await JtwAdappter.validaTeToken<{ id: string }>(token);
 
             if ( !payload ) return res.status(401).json({ error: 'Invalid token' });
             

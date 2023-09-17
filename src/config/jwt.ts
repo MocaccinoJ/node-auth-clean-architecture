@@ -20,13 +20,14 @@ export class JtwAdappter {
         
     }
 
-    static validaTeToken(token: string) {
+    static validaTeToken<T>(token: string): Promise<T | null> {
+
         return new Promise ( ( resolve ) => {
             jwt.verify( token, 'SEED', (err, decoded) => {
                 
                 if ( err ) return resolve(null);
                 
-                resolve(decoded);
+                resolve(decoded as T);
                 
             } )
         } )
