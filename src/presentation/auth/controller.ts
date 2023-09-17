@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { RegisterUserDto } from "../../domain/dtos/auth/register-user.dto";
 import { AuthRepository, CustomError } from "../../domain";
+import { JtwAdappter } from "../../config";
 
 export class AuthController {
 
@@ -25,7 +26,12 @@ export class AuthController {
         if ( error ) return res.status(400).json({ state: false, error: error });
 
         this.authRepository.register(registerUserDto!)
-            .then( user => res.json(user) )
+            .then( async (user) => {
+                res.json({
+                    user,
+                    toke: await JtwAdappter.generateToken({ email: user.email })
+                })
+            } )
             // nota: no es bueno dar información sobre el servidor, ex: "user already exist"
             .catch( error => this.handleError(error, res) )
     };
