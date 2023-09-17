@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { JtwAdappter } from "../../../config";
+import { UserModel } from "../../../data/mongodb";
 
 
 
@@ -20,8 +21,13 @@ export class AuthMiddleware {
             const payload = await JtwAdappter.validaTeToken<{ id: string }>(token);
 
             if ( !payload ) return res.status(401).json({ error: 'Invalid token' });
+
+
+            const user = await UserModel.findById(payload.id);
+            if ( !user ) return res.status(401).json({ error: 'Invalid token - user not found' });
+
             
-            req.body.token = token;
+            req.body.user = user;
 
 
             next();
