@@ -23,6 +23,7 @@ export class AuthDataSourceImpl implements AuthDatasource {
 
             //1. verificar si el correo existe
             const emailExist = await UserModel.findOne({ email: email });
+            // No es bueno dar informaciòn explìsita sobre el servidor "user already exist, es mejor dejar un error genèrico"
             if(emailExist) throw CustomError.badRequest('User already exist');
 
             const user = await UserModel.create({

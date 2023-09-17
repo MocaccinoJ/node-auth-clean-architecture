@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { RegisterUserDto } from "../../domain/dtos/auth/register-user.dto";
-import { AuthRepository } from "../../domain";
+import { AuthRepository, CustomError } from "../../domain";
 
 export class AuthController {
 
@@ -11,6 +11,14 @@ export class AuthController {
         private  readonly authRepository: AuthRepository,
     ) {}
 
+    private handleError = ( error: unknown, res: Response ) => {
+        if ( error instanceof CustomError ) {
+            return res.status(error.statusCode).json({ error: error.message });
+        }
+        console.log(error); //winston
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+
     registerUser = ( req: Request, res: Response ) => {
 
         const [error, registerUserDto] = RegisterUserDto.create(req.body);
@@ -18,7 +26,8 @@ export class AuthController {
 
         this.authRepository.register(registerUserDto!)
             .then( user => res.json(user) )
-            .catch( error => res.status(500).json(error) )
+            // nota: no es bueno dar información sobre el servidor, ex: "user already exist"
+            .catch( error => this.handleError(error, res) )
     };
 
     loginUser = ( req: Request, res: Response ) => {
