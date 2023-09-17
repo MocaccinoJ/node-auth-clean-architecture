@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { RegisterUserDto } from "../../domain/dtos/auth/register-user.dto";
 import { AuthRepository, CustomError } from "../../domain";
 import { JtwAdappter } from "../../config";
+import { UserModel } from "../../data/mongodb";
 
 export class AuthController {
 
@@ -29,7 +30,7 @@ export class AuthController {
             .then( async (user) => {
                 res.json({
                     user,
-                    toke: await JtwAdappter.generateToken({ email: user.email })
+                    toke: await JtwAdappter.generateToken({ id: user.id })
                 })
             } )
             // nota: no es bueno dar información sobre el servidor, ex: "user already exist"
@@ -39,5 +40,13 @@ export class AuthController {
     loginUser = ( req: Request, res: Response ) => {
         res.json('Login User Controller');
     };
+
+    getUsers = (req: Request, res: Response) => {
+
+        UserModel.find()
+            .then( users => res.json(users) )
+            .catch(() => res.status(500).json({ error: 'Internal server error' }) )
+
+    }
 
 };
