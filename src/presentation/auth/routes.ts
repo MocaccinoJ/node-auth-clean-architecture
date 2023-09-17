@@ -9,7 +9,7 @@ export class AuthRoutes {
 
     static get routes(): Router {
 
-        const database = new AuthDataSourceImpl; 
+        const database = new AuthDataSourceImpl(); 
         const authRepository = new AuthRepositoriImpl(database);
         
         const router = Router();
