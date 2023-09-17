@@ -1,6 +1,7 @@
 import { UserModel } from "../../data/mongodb";
 import { AuthDatasource, CustomError, RegisterUserDto, UserEntity } from "../../domain";
 import { BcryptAdapter } from "../../config";
+import { UserMapper } from "../mappers/user.mapper";
 
 //¿Por qué un type y no una interfaz? type es más para tipos de datos, las interfaces son más utilizadas para objetos con propiedades
 type HashFunction =  (password: string) => string;
@@ -34,19 +35,7 @@ export class AuthDataSourceImpl implements AuthDatasource {
 
             await user.save();
             
-            //2. Hash de contraseña
-
-
-
-            //3. Mapear la respuesta a nuestra entity
-            // todo: falta un mapper
-            return new UserEntity(
-                user.id,
-                name,
-                email,
-                user.password,
-                user.roles,
-            );
+            return UserMapper.userEntityFromObject(user);
             
         } catch (error) {
 
